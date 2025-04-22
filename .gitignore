@@ -1,8 +1,11 @@
 __pycache__/
+.DS_Store
 
 /logs
 /models
 /obs
 /Metrics
-
+/Save
 *.txt
+
+tests.ipynb

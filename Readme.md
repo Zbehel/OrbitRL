@@ -19,21 +19,6 @@ This project simulates a simplified 2D solar system environment using Pygame and
 * **Logging:** Records key training metrics (episode number, steps, total reward, average loss, epsilon, goal achievement) to a CSV file (`training_log.csv`) for monitoring learning progress.
 * **Model Saving/Loading:** Automatically saves the trained policy network weights (`agent_policy_weights.pth`) and distance logs (`distances_log.csv`) in timestamped directories within `Metrics/`. Allows loading pre-trained models to continue training or evaluate performance.
 
-## File Structure
-.
-├── main.txt                # Main script to run the simulation and training loop
-├── Agent.txt               # Contains the RL Agent class, AttentionDQNNetwork, ReplayMemory
-├── utils.txt               # Utility functions (physics, state calculation, resets, etc.)
-├── Class_Def.txt           # Class definitions for Celestial_Core, Planet, SpaceShip
-├── Const.txt               # Constants, hyperparameters, reward weights, simulation settings
-├── Metrics/                # Directory created to store logs, saved models, and distance data
-│   └── AttentionDQN/       # Subdirectory for the specific model type
-│       └── YYYYMMDD-HHMMSS/ # Timestamped directory for each run
-│           ├── training_log.csv
-│           ├── distances_log.csv
-│           └── agent_policy_weights.pth
-└── README.md               # This file
-
 
 ## Setup
 
