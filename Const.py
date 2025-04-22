@@ -6,7 +6,7 @@ G = 6.67428e-11
 Scale = 250 / AU   # 1AU = 100 pixels
 Step_p_frame = 1
 TIMESTEP = 3600 # 1 hour
-WIDTH, HEIGHT =  600, 300
+WIDTH, HEIGHT =  800, 600
 FPS = 60e3
 ACCELERATING_RATE = 1_000_000
 
@@ -27,7 +27,7 @@ DEVICE = "mps"
 # Weights for reward components 
 
 # --- Constants for Target Distance Reward Function ---
-TARGET_DISTANCE_FACTOR = 5.0       # Target distance = TARGET_DISTANCE_FACTOR * planet_radius
+TARGET_DISTANCE_FACTOR = 5e3       # Target distance = TARGET_DISTANCE_FACTOR * planet_radius
 # Scale factor for error (e.g., 1 million km = 1e9 meters, or adjust based on typical orbital scales)
 DISTANCE_REWARD_SCALE_FACTOR = 1e9
 # Alpha controls the sharpness of the peak reward (applied to scaled error)
@@ -41,7 +41,7 @@ REWARD_DISTANCE_SCALE = 1e-9  # Scales the reward/penalty for change in distance
 
 
 REWARD_SPEED_SCALE = 1e1    # Scales the reward for being close to orbital speed
-COST_PER_THRUST = .1         # Penalty for firing any thruster (action > 0)
+NO_THRUST_REWARD = 25         # Penalty for firing any thruster (action > 0)
 TIME_PENALTY = 0.01           # Small penalty for each time step taken
 GOAL_REWARD = 100.0           # Large reward for achieving stable orbit with motors off
 ORBIT_SPEED_TOLERANCE = 100   # Speed difference tolerance (m/s) to be considered 'in orbit' for reward
@@ -53,8 +53,8 @@ ACTION_SIZE = 7         # Actions: 0: none, 1: right, 2: left, 3: up, 4:right+up
 MEMORY_CAPACITY = 50000 # Replay memory size (adjust based on RAM)
 BATCH_SIZE = 128        # Number of experiences to sample for each learning step
 GAMMA = 0.99            # Discount factor for future rewards
-EPS_START = 0.25        # Starting value for epsilon (exploration rate)
-EPS_END = 0.05          # Minimum value for epsilon
+EPS_START = 0.05        # Starting value for epsilon (exploration rate)
+EPS_END = 0.01          # Minimum value for epsilon
 EPS_DECAY = 20000       # Controls how fast epsilon decreases (higher means slower decay)
 TAU = 0.005             # Soft update parameter for target network weights
 LR = 5e-4               # Learning rate for the Adam optimizer
@@ -75,8 +75,7 @@ MAX_HISTORY_LEN = 5000 # Max length for deques (can be larger than SEQ_LENGTH)
 MODEL_NAME = "AttentionDQN" # Name for saving/loading
 
 # --- Simulation Settings for RL ---
-MAX_STEPS_PER_EPISODE = 1000 # Limit episode length
-CRASH_DISTANCE_THRESHOLD = 1.0E7 # Example: Define a crash distance from planet surface (meters) - needs tuning
+CRASH_DISTANCE_THRESHOLD = 1.0E6 # Example: Define a crash distance from planet surface (meters) - needs tuning
 OUT_OF_BOUNDS_DISTANCE = 25 * AU # Example: Max distance from Sun before episode ends
 
 Core_position = {

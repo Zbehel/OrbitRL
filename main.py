@@ -232,17 +232,9 @@ def SatSim(load_weights=False):
 
                         # --- 6a. Calculate Reward Components ---
                         # Distance Reward :
-                        d_target_m = target_planet.radius * TARGET_DISTANCE_FACTOR
-                            # Calculate error in meters
-                        error_m = current_distance - d_target_m
-                            # Scale the error
-                        scaled_error = error_m / DISTANCE_REWARD_SCALE_FACTOR
-                            # Calculate the reward using the formula with scaled error
-                            # Quadratic penalty term + Exponential bonus term
-                        # reward_distance = - (scaled_error) + REWARD_COEFF * math.exp(-REWARD_ALPHA * (scaled_error**2))
-                        reward_distance = float(AU/abs(current_distance - 10*target_planet.radius)) * np.sign(prev_dist - current_distance)# * REWARD_DISTANCE_SCALE # 
-                        # Optional: Add a small overall scaling factor if needed
-                        # reward_distance *= SOME_OVERALL_SCALE # e.g., 0.1 or 1.0
+                        reward_distance = float(AU/abs(current_distance - 10*target_planet.radius)) 
+                        if current_distance>50*target_planet.radius: 
+                            reward_distance *= np.sign(prev_dist - current_distance)
 
 
                         # Orbital speed reward & goal check
@@ -251,17 +243,15 @@ def SatSim(load_weights=False):
                         rel_vx_now = rocket.vx - target_planet.vx # Use updated velocities
                         rel_vy_now = rocket.vy - target_planet.vy
                         current_speed_relative = math.sqrt(rel_vx_now**2 + rel_vy_now**2)
-                        speed_diff = abs((current_speed_relative - ideal_orbital_speed) / ideal_orbital_speed)
-                        # reward_speed = REWARD_SPEED_SCALE / (1e-6 + speed_diff_ratio) # Old version
-                        reward_speed = 0#(min_dist_potential/current_distance) * (REWARD_SPEED_SCALE / (1e-6 + speed_diff)) 
-                        # print((1e-6 + speed_diff) , 1./(1e-6 + speed_diff) )
-                    #  reward_speed = REWARD_SPEED_SCALE * (1.0 - speed_diff_ratio**2)
+                        speed_diff = abs((current_speed_relative - ideal_orbital_speed) / current_speed_relative)
+                        reward_speed = REWARD_SPEED_SCALE * (1.0 - speed_diff)
 
-                        # Action Penalty
-                        reward_action = 0#-COST_PER_THRUST if action > 0 else 0 # Penalize any thrust
+                        reward_action = 0
+                        if current_distance<20*target_planet.radius:
+                            reward_action = NO_THRUST_REWARD if action == 0 else 0 # Penalize any thrust
 
                         # Time Penalty
-                        reward_time = 0 #-TIME_PENALTY (Far too soon)
+                        reward_time = 0 #-TIME_PENALTY (Far too soon) Probably useless w/ fuel consuption notion.
 
                         # Goal Reward Check (use updated distance/speed)
                         is_orbiting_goal = (speed_diff * ideal_orbital_speed < ORBIT_SPEED_TOLERANCE) and \
@@ -283,9 +273,10 @@ def SatSim(load_weights=False):
 
                         # --- 6b. Check "Done" Conditions ---
                         # Crash into target planet
-                        crash_dist_m = (target_planet.radius) + CRASH_DISTANCE_THRESHOLD
+                        crash_dist_m = (target_planet.radius) #+ CRASH_DISTANCE_THRESHOLD
                         if current_distance < crash_dist_m :
                             print("Crashed into target! Resetting rocket.")
+                            print(current_distance, target_planet.radius)
                             done = True
                             reward -= GOAL_REWARD * 0.5 # Penalty for crash
                             # Resetting logic now handles history clearing (see point 5)

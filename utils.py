@@ -48,7 +48,7 @@ def update_position(planets,rockets):
 		for j in planets:
 			if (i.x - j.x)**2 + (i.y - j.y)**2 < (i.radius + j.radius)**2:
 				del i
-				rockets.remove(i)
+				# rockets.remove(i)
 	return planets,rockets
 
 def Solar_System():
