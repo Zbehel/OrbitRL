@@ -38,7 +38,6 @@ This project simulates a simplified 2D solar system environment using Pygame and
     ```bash
     python main.py
     ```
-    (Assuming you rename the `.txt` files to `.py`)
 2.  **Training:** The simulation starts training the agent immediately. Progress is logged to the console and the `training_log.csv` file within the latest `Metrics/AttentionDQN/` subdirectory.
 3.  **Loading Weights:** To load the latest trained model instead of starting from scratch, modify the last line in `main.py`:
     ```python
@@ -61,13 +60,13 @@ This project simulates a simplified 2D solar system environment using Pygame and
 
 ## Key Components Explained
 
-* **`main.txt`**
+* **`main.py`**
     * Orchestrates the entire process.
     * Initializes Pygame, celestial bodies (`Solar_System`), the `Agent`, history deques (`action_hist`, etc.), and logging (`agent.setup_logging`).
     * Contains the main `while run:` loop: Handles Pygame events, calculates state (`calculate_current_relative_state`, `get_state_sequence`), gets actions (`agent.select_action`), applies actions, updates physics (`update_position`), calculates rewards, stores experiences (`agent.store_experience`), triggers learning (`agent.optimize_model`, `agent.update_target_net`), handles episode termination/logging (`agent.log_episode_data`), and updates the display.
     * Calls `agent.save_weights_and_distances` and `agent.close_log` upon quitting.
 
-* **`Agent.txt`**
+* **`Agent.py`**
     * Defines the `Agent` class responsible for learning and decision-making.
     * Initializes the `AttentionDQNNetwork` for `policy_net` and `target_net`.
     * `AttentionDQNNetwork`: Processes sequence input `(batch, features, seq_len)` and masks using `Conv1d`, `MultiheadAttention`, `LayerNorm`, and residual connections to output Q-values.
@@ -79,7 +78,7 @@ This project simulates a simplified 2D solar system environment using Pygame and
     * `setup_logging`, `log_episode_data`, `close_log`: Handle CSV logging.
     * `save_weights_and_distances`, `load_weights`: Manage saving/loading network weights and distance data.
 
-* **`utils.txt`**
+* **`utils.py`**
     * Contains helper functions.
     * `update_position`: Core physics engine (gravity, thrust, simple collisions).
     * `Solar_System`: Creates initial planets.
@@ -90,10 +89,10 @@ This project simulates a simplified 2D solar system environment using Pygame and
     * `reset_rocket_state`: Resets rocket position/velocity.
     * `save_distance_data`: Saves distance logs using pandas.
 
-* **`Class_Def.txt`**
+* **`Class_Def.py`**
     * Defines object structure: `Celestial_Core` (base), `Planet` (adds radius/color), `SpaceShip` (adds reactors, `apply_action`). Implements `draw` methods for visualization.
 
-* **`Const.txt`**
+* **`Const.py`**
     * Centralizes constants: Physical (`G`, `AU`), Simulation (`WIDTH`, `HEIGHT`, `TIMESTEP`), Visualization (`Colors`), RL Hyperparameters (`GAMMA`, `LR`, `EPS_...`, `BATCH_SIZE`, `SEQ_LENGTH`, `NUM_FEATURES`, `ACTION_SIZE`), Reward Weights (`REWARD_..._SCALE`, `COST_PER_THRUST`, etc.), Termination Conditions.
 
 ## Agent Logic and Learning Process
@@ -107,12 +106,12 @@ The agent doesn't perceive the simulation visually. Its understanding comes from
     1.  The **action** taken in that step.
     2.  Normalized **relative X/Y position** to the target.
     3.  Normalized **relative X/Y velocity** to the target.
-* **State Construction:** The `get_state_sequence` function compiles this history from deques (`action_hist`, etc.) maintained in `main.txt`, padding the start if the history is short, and produces the `state_sequence` tensor and a `state_mask` tensor (indicating real vs. padded data).
+* **State Construction:** The `get_state_sequence` function compiles this history from deques (`action_hist`, etc.) maintained in `main.py`, padding the start if the history is short, and produces the `state_sequence` tensor and a `state_mask` tensor (indicating real vs. padded data).
 * **Attention Processing:** The `AttentionDQNNetwork` uses its attention layers, guided by the `state_mask`, to focus on the most relevant parts of this historical sequence when determining the value of actions.
 
 ### 2. The Reward Process: Guiding the Agent
 
-After the agent acts and the simulation updates, a `reward` signal is calculated in `main.txt` to provide feedback:
+After the agent acts and the simulation updates, a `reward` signal is calculated in `main.py` to provide feedback:
 
 * **Reward Components:** The total `step_reward` sums several factors:
     * **Distance Change:** Rewards getting closer, penalizes getting farther.
@@ -144,6 +143,10 @@ Rewards drive the learning process, teaching the agent which actions lead to bet
 * **Algorithm:** Attention-Based Deep Q-Network (AttentionDQN) with Experience Replay and Target Network.
 
 ## Future Work / Improvements
+
+* The current rewards need to be refine. The more the agent learns good behavior close to the target the more it forget how to approach it.
+* A negative factor if the target get farther is applied only before the rocket gets in the target's area. A smoother method should work better (similar to offset(?))
+* 
 
 * Implement more realistic physics (e.g., N-body simulation, fuel consumption affecting mass).
 * Explore continuous action spaces (variable thrust) using algorithms like DDPG, TD3, or SAC.
