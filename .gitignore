@@ -6,6 +6,5 @@ __pycache__/
 /obs
 /Metrics
 /Save
-*.txt
 
 tests.ipynb
