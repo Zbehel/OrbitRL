@@ -146,13 +146,7 @@ Rewards drive the learning process, teaching the agent which actions lead to bet
 
 * The current rewards need to be refine. The more the agent learns good behavior close to the target the more it forget how to approach it.
 * A negative factor if the target get farther is applied only before the rocket gets in the target's area. A smoother method should work better (similar to offset(?))
-* 
-
 * Implement more realistic physics (e.g., N-body simulation, fuel consumption affecting mass).
-* Explore continuous action spaces (variable thrust) using algorithms like DDPG, TD3, or SAC.
-* Experiment with different attention mechanisms or Transformer architectures.
 * Refine the reward function further.
 * Implement more sophisticated goal conditions or multi-stage goals.
-* Use hyperparameter optimization tools (e.g., Optuna) to find better hyperparameters.
-* Add more complex scenarios (e.g., avoiding asteroids, docking).
 * Improve visualization (e.g., show velocity vectors, predicted trajectories).
